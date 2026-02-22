@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Single-name check</h5>
+        <form method="post" class="row g-3">
+          <input type="hidden" name="mode" value="single">
+          <div class="col-12">
+            <label class="form-label">Counterparty name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Evil Corp International Ltd" required>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100">Run check</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if single_result %}
+    <div class="card mt-3">
+      <div class="card-body">
+        <h6>Result</h6>
+        <p class="mb-1"><strong>Input:</strong> {{ single_result.input }}</p>
+        <p class="mb-1"><strong>Best match:</strong> {{ single_result.match or "None" }}</p>
+        <p class="mb-1"><strong>Similarity score:</strong> {{ single_result.score }}%</p>
+        <p class="mb-0">
+          <strong>Risk:</strong>
+          {% if single_result.risk == "HIGH" %}
+            <span class="badge bg-danger">HIGH</span>
+          {% elif single_result.risk == "MEDIUM" %}
+            <span class="badge bg-warning text-dark">MEDIUM</span>
+          {% else %}
+            <span class="badge bg-success">LOW</span>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Batch check (CSV)</h5>
+        <p class="text-muted">
+          Upload a CSV file with a <code>counterparty</code> column. The app will compare each name against
+          an internal sanctions list and flag potential matches.
+        </p>
+        <form method="post" enctype="multipart/form-data" class="row g-3">
+          <input type="hidden" name="mode" value="batch">
+          <div class="col-md-8">
+            <label class="form-label">Batch file (CSV)</label>
+            <input type="file" name="file" class="form-control" accept=".csv" required>
+          </div>
+          <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-secondary w-100">Run batch check</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if batch_results %}
+    <div class="card mt-3">
+      <div class="card-body">
+        <h6 class="mb-3">Batch results</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped align-middle">
+            <thead>
+              <tr>
+                <th>Counterparty</th>
+                <th>Best match</th>
+                <th>Score</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in batch_results %}
+              <tr>
+                <td>{{ r.input }}</td>
+                <td>{{ r.match or "None" }}</td>
+                <td>{{ r.score }}%</td>
+                <td>
+                  {% if r.risk == "HIGH" %}
+                    <span class="badge bg-danger">HIGH</span>
+                  {% elif r.risk == "MEDIUM" %}
+                    <span class="badge bg-warning text-dark">MEDIUM</span>
+                  {% else %}
+                    <span class="badge bg-success">LOW</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="small text-muted mb-0">
+          Demo only – for production use, this should be wired to official OFAC / UN / EU / UK lists and integrated into the bank's KYC/AML framework.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
