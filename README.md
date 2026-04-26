@@ -4,8 +4,6 @@
 
 Want to hire me? Check out my LinkedIn here: https://www.linkedin.com/in/jesse-o-03476a102/
 
-Want to comission me for a project? Check out my Upwork profile here: https://www.upwork.com/freelancers/~0193f57dd84700cb81
-
 # KYC / Sanctions Screening Engine (Demo)
 
 A lightweight Flask-based sanctions screening tool that demonstrates how financial institutions can automate basic counterparty risk checks using fuzzy name matching and risk scoring logic.
